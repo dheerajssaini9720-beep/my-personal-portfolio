@@ -1,0 +1,844 @@
+/* =====================================================
+   1. VARIABLES AND RESET
+   ===================================================== */
+
+:root {
+  --bg: #05070f;
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --line: rgba(255, 255, 255, 0.08);
+  --card: rgba(255, 255, 255, 0.04);
+
+  /* Accent color. JS adds class "theme-tools" to switch it */
+  --accent: #3b82f6;
+
+  --font-head: "Sora", system-ui, sans-serif;
+  --font-body: "Manrope", system-ui, sans-serif;
+
+  --circle-size: 340px;
+}
+
+body.theme-tools {
+  --accent: #10b981;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.7;
+  padding-bottom: 110px; /* space for the floating switcher */
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.container {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+
+/* =====================================================
+   2. BACKGROUND
+   ===================================================== */
+
+.bg-glow,
+.bg-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Blue glow on the left, green glow on the right */
+.bg-glow::before,
+.bg-glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transition: opacity 1.2s ease;
+}
+
+.bg-glow::before {
+  background: radial-gradient(circle at 0% 50%, rgba(59, 130, 246, 0.2), transparent 55%);
+  opacity: 1;
+}
+
+.bg-glow::after {
+  background: radial-gradient(circle at 100% 50%, rgba(16, 185, 129, 0.2), transparent 55%);
+  opacity: 0;
+}
+
+body.theme-tools .bg-glow::before {
+  opacity: 0;
+}
+
+body.theme-tools .bg-glow::after {
+  opacity: 1;
+}
+
+/* Grid lines that only show near the mouse (JS sets --mx and --my) */
+.bg-grid {
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(circle 280px at var(--mx, 50%) var(--my, 30%), black, transparent);
+  mask-image: radial-gradient(circle 280px at var(--mx, 50%) var(--my, 30%), black, transparent);
+}
+
+header,
+main,
+footer {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* =====================================================
+   3. HEADER AND NAVIGATION
+   ===================================================== */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(5, 7, 15, 0.7);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+}
+
+.logo {
+  font-family: var(--font-head);
+  font-weight: 500;
+  font-size: 19px;
+}
+
+.logo span {
+  color: var(--accent);
+}
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.nav-links a {
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: var(--text);
+}
+
+
+/* =====================================================
+   4. BUTTONS
+   ===================================================== */
+
+.btn {
+  display: inline-block;
+  padding: 13px 26px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 15px;
+  background: var(--text);
+  color: #05070f;
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  background: #ffffff;
+}
+
+.btn-small {
+  padding: 9px 20px;
+  font-size: 14px;
+}
+
+.btn-ghost {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+
+.btn-ghost:hover {
+  background: var(--card);
+  border-color: var(--accent);
+}
+
+
+/* =====================================================
+   5. HERO
+   ===================================================== */
+
+.hero {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 110px;
+  min-height: calc(100vh - 68px);
+  padding-top: 40px;
+  padding-bottom: 40px;
+  justify-content: center;
+}
+
+/* ---- Photo side ---- */
+
+.visual {
+  position: relative;
+  width: var(--circle-size);
+  height: var(--circle-size);
+}
+
+.ring {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.ring-dashed {
+  inset: -9%;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-left: 1px dashed var(--accent);
+  animation: spin 20s linear infinite;
+}
+
+.ring-glow {
+  inset: 0;
+  background: linear-gradient(135deg, var(--accent), #0b1020);
+  filter: blur(40px);
+  opacity: 0.4;
+  animation: breathe 4s ease-in-out infinite;
+}
+
+.photo-circle {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  animation: float 6s ease-in-out infinite;
+}
+
+.photo-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.status-pill {
+  position: absolute;
+  bottom: -26px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--muted);
+  background: rgba(5, 7, 15, 0.85);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: blink 1.6s ease-in-out infinite;
+}
+
+/* ---- Details side ---- */
+
+.details {
+  max-width: 460px;
+  width: 100%;
+}
+
+.panel {
+  display: none;
+}
+
+.panel.is-active {
+  display: block;
+  animation: panel-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.eyebrow {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.details h1 {
+  font-family: var(--font-head);
+  font-size: clamp(34px, 4.6vw, 52px);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  margin-bottom: 16px;
+  background: linear-gradient(180deg, #ffffff, #8b95a8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.intro {
+  color: var(--muted);
+  margin-bottom: 30px;
+  max-width: 420px;
+}
+
+.stats-box {
+  padding: 26px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.stat + .stat {
+  margin-top: 22px;
+}
+
+.stat-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 15px;
+  color: #e2e8f0;
+}
+
+.stat-value {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.bar {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  width: 0;               /* JS fills this using data-value */
+  border-radius: 999px;
+  background: var(--accent);
+  opacity: 0.85;
+  transition: width 1s ease 0.3s;
+}
+
+.stats-link {
+  display: inline-block;
+  margin-top: 26px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #cbd5e1;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.stats-link:hover {
+  color: var(--accent);
+  transform: translateX(4px);
+}
+
+
+/* =====================================================
+   6. COMMON SECTION STYLES
+   ===================================================== */
+
+.section {
+  padding-top: 100px;
+  padding-bottom: 40px;
+}
+
+.section-title {
+  font-family: var(--font-head);
+  font-size: clamp(28px, 4vw, 40px);
+  letter-spacing: -0.02em;
+  margin-bottom: 10px;
+}
+
+.section-sub {
+  color: var(--muted);
+  max-width: 560px;
+  margin-bottom: 44px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.tags li {
+  font-size: 13px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--line);
+}
+
+
+/* =====================================================
+   7. ABOUT
+   ===================================================== */
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 56px;
+}
+
+.about-text p {
+  color: #cbd5e1;
+}
+
+.about-text p + p {
+  margin-top: 18px;
+}
+
+.facts {
+  align-self: start;
+  padding: 26px;
+  border-radius: 18px;
+  background: var(--card);
+  border: 1px solid var(--line);
+}
+
+.facts div + div {
+  margin-top: 18px;
+}
+
+.facts dt {
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.facts dd {
+  font-weight: 600;
+}
+
+
+/* =====================================================
+   8. SKILLS
+   ===================================================== */
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  padding: 26px;
+  border-radius: 18px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+}
+
+.card h3 {
+  font-family: var(--font-head);
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.card p {
+  color: var(--muted);
+  font-size: 15px;
+}
+
+
+/* =====================================================
+   9. PROJECTS
+   ===================================================== */
+
+.projects-grid {
+  display: grid;
+  gap: 26px;
+}
+
+.project {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--line);
+  transition: border-color 0.25s ease;
+}
+
+.project:hover {
+  border-color: var(--accent);
+}
+
+.project-media {
+  min-height: 250px;
+  background: linear-gradient(135deg, #111a3a, #0b2a30);
+}
+
+.project-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.project-body {
+  padding: 34px;
+}
+
+.project-body h3 {
+  font-family: var(--font-head);
+  font-size: 23px;
+  margin-bottom: 10px;
+}
+
+.project-body p {
+  color: var(--muted);
+}
+
+.project-links {
+  display: flex;
+  gap: 22px;
+  margin-top: 22px;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.project-links a {
+  color: var(--accent);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.project-links a:hover {
+  border-bottom-color: var(--accent);
+}
+
+
+/* =====================================================
+   10. CONTACT AND FOOTER
+   ===================================================== */
+
+.contact {
+  text-align: center;
+  padding-top: 120px;
+}
+
+.contact .section-sub {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.email-link {
+  display: inline-block;
+  margin-bottom: 36px;
+  padding-bottom: 4px;
+  font-family: var(--font-head);
+  font-size: clamp(20px, 4vw, 34px);
+  font-weight: 600;
+  word-break: break-all;
+  border-bottom: 2px solid var(--accent);
+  transition: color 0.2s ease;
+}
+
+.email-link:hover {
+  color: var(--accent);
+}
+
+.social-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.site-footer {
+  margin-top: 80px;
+  padding: 28px 24px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+}
+
+
+/* =====================================================
+   11. FLOATING SWITCHER
+   ===================================================== */
+
+.switcher {
+  --index: 0; /* JS sets this to 0 or 1 */
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  padding: 6px;
+  border-radius: 999px;
+  background: rgba(20, 22, 30, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+.switch-btn {
+  position: relative;
+  z-index: 2;
+  width: 104px;
+  height: 46px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.switch-btn:hover {
+  color: #cbd5e1;
+}
+
+.switch-btn.is-active {
+  color: #ffffff;
+}
+
+/* The sliding pill behind the active button */
+.switch-thumb {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 1;
+  width: 104px;
+  height: 46px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
+  transform: translateX(calc(var(--index) * 100%));
+  transition: transform 0.45s cubic-bezier(0.34, 1.4, 0.5, 1);
+}
+
+
+/* =====================================================
+   12. ANIMATIONS
+   ===================================================== */
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(-8px);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+
+/* =====================================================
+   13. RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 1000px) {
+  :root {
+    --circle-size: 340px;
+  }
+
+  .hero {
+    gap: 70px;
+  }
+}
+
+@media (max-width: 860px) {
+  :root {
+    --circle-size: 300px;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 70px;
+    text-align: center;
+  }
+
+  .details {
+    max-width: 520px;
+  }
+
+  .intro {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .stat-top {
+    text-align: left;
+  }
+
+  .about-grid,
+  .project {
+    grid-template-columns: 1fr;
+  }
+
+  .project-media {
+    min-height: 200px;
+  }
+
+  .nav-links {
+    gap: 18px;
+    font-size: 14px;
+  }
+
+  .nav .btn-small {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 16px;
+  }
+
+  .nav-links {
+    gap: 12px;
+    font-size: 13px;
+  }
+
+  .logo {
+    font-size: 17px;
+  }
+
+  .section {
+    padding-top: 72px;
+  }
+
+  .project-body {
+    padding: 24px;
+  }
+
+  .switch-btn,
+  .switch-thumb {
+    width: 92px;
+  }
+}
+
+
+/* =====================================================
+   14. REDUCED MOTION
+   ===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
