@@ -542,7 +542,8 @@ footer {
 }
 
 .project-media {
-  min-height: 250px;
+   height: 250px;
+  overflow: hidden;
   background: linear-gradient(135deg, #111a3a, #0b2a30);
 }
 
@@ -553,7 +554,7 @@ footer {
 }
 
 .project-body {
-  padding: 34px;
+  padding: 28px;
 }
 
 .project-body h3 {
